@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0"><dict>
-<key>CFBundleExecutable</key><string>Lidlight</string>
-<key>CFBundleIdentifier</key><string>io.github.azoghby.lidlight</string>
-<key>CFBundleName</key><string>Lidlight</string>
-<key>CFBundleDisplayName</key><string>Lidlight</string>
+<key>CFBundleExecutable</key><string>Stimulate</string>
+<key>CFBundleIdentifier</key><string>io.github.azoghby.stimulate</string>
+<key>CFBundleName</key><string>Stimulate</string>
+<key>CFBundleDisplayName</key><string>Stimulate</string>
 <key>CFBundlePackageType</key><string>APPL</string>
 <key>CFBundleVersion</key><string>1</string>
 <key>CFBundleShortVersionString</key><string>1.0</string>

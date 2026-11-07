@@ -1,8 +1,8 @@
-# Lidlight
+# Stimulate
 
 **A small, open-source macOS utility for timed closed-lid keep-awake sessions.**
 
-Choose a duration, authorize the session, and monitor it from a native window or the menu bar. Lidlight is independently implemented; it does not contain Amphetamine code and is not affiliated with Amphetamine or its developer. It is a focused alternative, not a complete replacement for Amphetamine's features.
+Choose a duration, authorize the session, and monitor it from a native window or the menu bar. Stimulate is independently implemented; it does not contain Amphetamine code and is not affiliated with Amphetamine or its developer. It is a focused alternative, not a complete replacement for Amphetamine's features.
 
 ## Features
 
@@ -25,19 +25,19 @@ Currently built and tested on one Apple Silicon Mac. Intel builds and other macO
 ## Build and install
 
 ```sh
-git clone https://github.com/azoghby/lidlight.git
-cd lidlight
+git clone https://github.com/azoghby/stimulate.git
+cd stimulate
 ./build.sh --install
-open "$HOME/Applications/Lidlight.app"
+open "$HOME/Applications/Stimulate.app"
 ```
 
-Without `--install`, `./build.sh` creates `build/Lidlight.app`. The script compiles for the current Mac's architecture and applies an ad-hoc code signature. The app is not Apple-notarized or distributed through the App Store.
+Without `--install`, `./build.sh` creates `build/Stimulate.app`. The script compiles for the current Mac's architecture and applies an ad-hoc code signature. The app is not Apple-notarized or distributed through the App Store.
 
 Quit an installed copy before rebuilding or installing over it.
 
 ## Use
 
-1. Open Lidlight and choose a duration.
+1. Open Stimulate and choose a duration.
 2. Approve the macOS administrator prompt.
 3. Wait for **Closed-lid session active** before closing the lid.
 4. Use **Stop and restore normal sleep** to end early. Closing the window leaves the menu-bar app running; use its Quit command to exit.
@@ -50,9 +50,9 @@ Test a brief lid close/reopen on your own Mac before relying on this. Verifying 
 
 For the duration of a session, a short-lived administrator-authorized instance of the app changes the system-wide `pmset disablesleep` setting. It watches the main app's heartbeat, process, deadline, and battery level, then restores the setting. The main app also holds an idle-sleep assertion and observes thermal pressure.
 
-Lidlight refuses to start if system sleep is already disabled by another utility. The watchdog rechecks the setting to handle resets after power-source changes. Avoid running competing closed-lid utilities simultaneously.
+Stimulate refuses to start if system sleep is already disabled by another utility. The watchdog rechecks the setting to handle resets after power-source changes. Avoid running competing closed-lid utilities simultaneously.
 
-The privileged watchdog stores session status and a lock in `/var/run/io.github.azoghby.lidlight`. It is not installed as a launch daemon. Authentication is handled by macOS; Lidlight does not collect or store your administrator password.
+The privileged watchdog stores session status and a lock in `/var/run/io.github.azoghby.stimulate`. It is not installed as a launch daemon. Authentication is handled by macOS; Stimulate does not collect or store your administrator password.
 
 ## Limitations and recovery
 
@@ -80,8 +80,8 @@ pmset -g
 
 ```sh
 ./build.sh
-./build/Lidlight.app/Contents/MacOS/Lidlight --self-test
-codesign --verify --verbose ./build/Lidlight.app
+./build/Stimulate.app/Contents/MacOS/Stimulate --self-test
+codesign --verify --verbose ./build/Stimulate.app
 ```
 
 The self-test covers shell quoting, a missing heartbeat, and read-only system-state inspection. It does not activate closed-lid mode or validate physical lid behavior.

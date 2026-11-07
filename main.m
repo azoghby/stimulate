@@ -7,7 +7,7 @@
 #import <fcntl.h>
 #import <sys/wait.h>
 
-static NSString *const StateDir = @"/var/run/io.github.azoghby.lidlight";
+static NSString *const StateDir = @"/var/run/io.github.azoghby.stimulate";
 static volatile sig_atomic_t interrupted = 0;
 static void onSignal(int value) { interrupted = value; }
 
@@ -116,7 +116,7 @@ static NSString *shellQuote(NSString *value) { return [NSString stringWithFormat
 - (void)applicationDidFinishLaunching:(NSNotification *)notification {
     self.assertion=kIOPMNullAssertionID;
     self.item=[[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength];
-    self.item.button.image=[NSImage imageWithSystemSymbolName:@"laptopcomputer" accessibilityDescription:@"Lidlight"];
+    self.item.button.image=[NSImage imageWithSystemSymbolName:@"laptopcomputer" accessibilityDescription:@"Stimulate"];
     self.item.button.image.template=YES;
     self.menu=[NSMenu new]; self.menu.autoenablesItems=NO; self.menu.delegate=self;
     self.headline=[[NSMenuItem alloc] initWithTitle:@"Normal sleep enabled" action:NULL keyEquivalent:@""];
@@ -132,7 +132,7 @@ static NSString *shellQuote(NSString *value) { return [NSString stringWithFormat
     self.stopItem.target=self; self.stopItem.enabled=NO; [self.menu addItem:self.stopItem];
     [self.menu addItem:NSMenuItem.separatorItem];
     NSMenuItem *about=[[NSMenuItem alloc] initWithTitle:@"About / how it works…" action:@selector(about:) keyEquivalent:@""]; about.target=self; [self.menu addItem:about];
-    NSMenuItem *quit=[[NSMenuItem alloc] initWithTitle:@"Quit Lidlight" action:@selector(quit:) keyEquivalent:@"q"]; quit.target=self; [self.menu addItem:quit];
+    NSMenuItem *quit=[[NSMenuItem alloc] initWithTitle:@"Quit Stimulate" action:@selector(quit:) keyEquivalent:@"q"]; quit.target=self; [self.menu addItem:quit];
     self.item.menu=self.menu;
     NSMenuItem *controls=[[NSMenuItem alloc] initWithTitle:@"Show controls…" action:@selector(showControls:) keyEquivalent:@""];
     controls.target=self; [self.menu insertItem:controls atIndex:self.menu.numberOfItems-2];
@@ -144,7 +144,7 @@ static NSString *shellQuote(NSString *value) { return [NSString stringWithFormat
 - (void)showControls:(id)sender {
     if (!self.window) {
         self.window=[[NSWindow alloc] initWithContentRect:NSMakeRect(0,0,520,340) styleMask:NSWindowStyleMaskTitled|NSWindowStyleMaskClosable|NSWindowStyleMaskMiniaturizable backing:NSBackingStoreBuffered defer:NO];
-        self.window.title=@"Lidlight"; self.window.releasedWhenClosed=NO;
+        self.window.title=@"Stimulate"; self.window.releasedWhenClosed=NO;
         NSView *view=self.window.contentView;
         self.windowStatus=[NSTextField labelWithString:@"Normal sleep enabled"];
         self.windowStatus.font=[NSFont systemFontOfSize:23 weight:NSFontWeightSemibold];
@@ -170,7 +170,7 @@ static NSString *shellQuote(NSString *value) { return [NSString stringWithFormat
 - (BOOL)applicationShouldHandleReopen:(NSApplication *)application hasVisibleWindows:(BOOL)flag { [self showControls:nil]; return YES; }
 - (void)about:(id)sender {
     [NSApp activateIgnoringOtherApps:YES];
-    NSAlert *alert=[NSAlert new]; alert.messageText=@"Lidlight";
+    NSAlert *alert=[NSAlert new]; alert.messageText=@"Stimulate";
     alert.informativeText=@"Use the laptop icon in your menu bar to start a 15–120 minute closed-lid session. macOS will ask for administrator permission.\n\nA separate background helper restores normal sleep at the deadline, when you stop or quit, if this app stops responding, or at 20% battery. Keep the Mac ventilated; do not run it inside a closed bag. Internet-dependent work still needs a connection.\n\nThis changes a system-wide power setting and can prevent manual sleep during the session. Compatibility must be tested on this Mac by closing and reopening the lid.\n\nRecovery command if needed:\nsudo pmset -a disablesleep 0\n\nNo login item, passwordless administrator rule, network service, or permanent helper is installed.";
     [alert addButtonWithTitle:@"Got it"]; [alert runModal];
 }
@@ -179,7 +179,7 @@ static NSString *shellQuote(NSString *value) { return [NSString stringWithFormat
     if (lowBattery()) { [self showError:@"Charge above 20% before starting a closed-lid session."]; return; }
     if (NSProcessInfo.processInfo.thermalState>=NSProcessInfoThermalStateSerious) { [self showError:@"Let your Mac cool down before starting."]; return; }
     if (disabled()) { [self showError:@"System sleep is already disabled by another tool. Restore it there first."]; return; }
-    NSString *directory=[NSTemporaryDirectory() stringByAppendingPathComponent:@"Lidlight"];
+    NSString *directory=[NSTemporaryDirectory() stringByAppendingPathComponent:@"Stimulate"];
     [[NSFileManager defaultManager] createDirectoryAtPath:directory withIntermediateDirectories:YES attributes:@{NSFilePosixPermissions:@0700} error:NULL];
     self.token=NSUUID.UUID.UUIDString;
     self.heartbeat=[directory stringByAppendingPathComponent:self.token];
@@ -205,7 +205,7 @@ static NSString *shellQuote(NSString *value) { return [NSString stringWithFormat
     [self tick:nil];
 }
 - (void)showError:(NSString *)message {
-    [NSApp activateIgnoringOtherApps:YES]; NSAlert *alert=[NSAlert new]; alert.messageText=@"Lidlight"; alert.informativeText=message; alert.alertStyle=NSAlertStyleWarning; [alert runModal];
+    [NSApp activateIgnoringOtherApps:YES]; NSAlert *alert=[NSAlert new]; alert.messageText=@"Stimulate"; alert.informativeText=message; alert.alertStyle=NSAlertStyleWarning; [alert runModal];
 }
 - (void)clearHeartbeat { if (self.heartbeat) [[NSFileManager defaultManager] removeItemAtPath:self.heartbeat error:NULL]; self.heartbeat=nil; }
 - (void)stop:(id)sender {
@@ -225,7 +225,7 @@ static NSString *shellQuote(NSString *value) { return [NSString stringWithFormat
         NSString *status=state[@"status"];
         self.active=[status isEqualToString:@"active"];
         if (self.active && !self.stopping) {
-            if (self.assertion==kIOPMNullAssertionID) IOPMAssertionCreateWithName(kIOPMAssertionTypePreventUserIdleSystemSleep,kIOPMAssertionLevelOn,CFSTR("Lidlight timed session"),&_assertion);
+            if (self.assertion==kIOPMNullAssertionID) IOPMAssertionCreateWithName(kIOPMAssertionTypePreventUserIdleSystemSleep,kIOPMAssertionLevelOn,CFSTR("Stimulate timed session"),&_assertion);
             if (NSProcessInfo.processInfo.thermalState>=NSProcessInfoThermalStateSerious) { [self stop:nil]; return; }
             NSInteger remaining=MAX(0,(NSInteger)[state[@"deadline"] doubleValue]-(NSInteger)NSDate.date.timeIntervalSince1970);
             self.lastReason=[NSString stringWithFormat:@"%ld:%02ld remaining · stops at 20%% battery",(long)remaining/60,(long)remaining%60];
@@ -240,7 +240,7 @@ static NSString *shellQuote(NSString *value) { return [NSString stringWithFormat
     self.headline.title=self.stopping ? @"Stopping…" : self.active ? @"Closed-lid session active" : self.authorizing ? @"Authorizing…" : disabled() ? @"System sleep disabled" : @"Normal sleep enabled";
     self.detail.title=self.lastReason ?: @"Choose a timed closed-lid session";
     self.item.button.title=self.active ? @" ON" : @"";
-    self.item.button.toolTip=[NSString stringWithFormat:@"Lidlight: %@",self.headline.title];
+    self.item.button.toolTip=[NSString stringWithFormat:@"Stimulate: %@",self.headline.title];
     BOOL busy=self.token!=nil || self.authorizing || self.stopping;
     for (NSMenuItem *entry in self.startItems) entry.enabled=!busy;
     self.stopItem.enabled=self.token!=nil && !self.authorizing && !self.stopping;
@@ -283,7 +283,7 @@ int main(int argc,const char *argv[]) {
         if (argc>1 && [args[1] isEqualToString:@"--self-test"]) {
             NSString *sample=@"a'b c";
             if (![shellQuote(sample) isEqualToString:@"'a'\\''b c'"]) return 1;
-            if (heartbeatFresh(@"/nonexistent/lidlight-test")) return 1;
+            if (heartbeatFresh(@"/nonexistent/stimulate-test")) return 1;
             printf("PASS: shell quoting, missing heartbeat, read-only system state. SleepDisabled=%d\n",disabled());
             return 0;
         }
